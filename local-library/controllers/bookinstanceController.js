@@ -1,25 +1,72 @@
 const BookInstance = require("../models/bookinstance");
 const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
+const Book = require("../models/book");
+
 
 // Display list of all BookInstances.
+// Display list of all BookInstances.
 exports.bookinstance_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance list");
+  const allBookInstances = await BookInstance.find().populate("book").exec();
+
+  res.render("bookinstance_list", {
+    title: "Book Instance List",
+    bookinstance_list: allBookInstances,
+  });
 });
 
+
+// Display detail page for a specific BookInstance.
 // Display detail page for a specific BookInstance.
 exports.bookinstance_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: BookInstance detail: ${req.params.id}`);
+  const bookInstance = await BookInstance.findById(req.params.id)
+    .populate("book")
+    .exec();
+
+  if (bookInstance === null) {
+    // No results.
+    const err = new Error("Book copy not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("bookinstance_detail", {
+    title: "Book:",
+    bookinstance: bookInstance,
+  });
 });
+
+
+// Display BookInstance create form on GET.
+// exports.bookinstance_create_get = asyncHandler(async (req, res, next) => {
+//   res.send("NOT IMPLEMENTED: BookInstance create GET");
+// });
 
 // Display BookInstance create form on GET.
 exports.bookinstance_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance create GET");
+  const allBooks = await Book.find({}, "title").sort({ title: 1 }).exec();
+
+  res.render("bookinstance_form", {
+    title: "Create BookInstance",
+    book_list: allBooks,
+  });
 });
 
+
 // Handle BookInstance create on POST.
-exports.bookinstance_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance create POST");
+// exports.bookinstance_create_post = asyncHandler(async (req, res, next) => {
+//   res.send("NOT IMPLEMENTED: BookInstance create POST");
+// });
+// Display BookInstance create form on GET.
+exports.bookinstance_create_get = asyncHandler(async (req, res, next) => {
+  const allBooks = await Book.find({}, "title").sort({ title: 1 }).exec();
+
+  res.render("bookinstance_form", {
+    title: "Create BookInstance",
+    book_list: allBooks,
+  });
 });
+
 
 // Display BookInstance delete form on GET.
 exports.bookinstance_delete_get = asyncHandler(async (req, res, next) => {

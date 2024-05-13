@@ -1,0 +1,15 @@
+extends layout
+
+block content 
+
+h1 = title 
+
+if genre_list.length
+ul 
+   each genre in genre_list
+    li
+      a(href=genre.url) #{genre.name}
+      |  (#{genre.date_of_birth} - {genre.date_of_death})
+        
+  else
+  p There are no genres
